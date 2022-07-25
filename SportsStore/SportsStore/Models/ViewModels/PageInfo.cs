@@ -1,4 +1,4 @@
-﻿namespace SportsStore.Models
+﻿namespace SportsStore.Models.ViewModels
 {
     public class PageInfo
     {
@@ -6,6 +6,6 @@
         public int ItensPerPage { get; set; }
         public int CurrentPage { get; set; }
 
-        public int TotalPage => (int)Math.Ceiling((decimal)TotalItems / TotalItems);
+        public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / TotalItems);
     }
 }
