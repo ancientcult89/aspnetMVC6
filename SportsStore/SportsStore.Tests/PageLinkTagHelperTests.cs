@@ -33,7 +33,7 @@ namespace SportsStore.Tests
                 {
                     CurrentPage = 2,
                     TotalItems = 28,
-                    ItensPerPage = 10
+                    ItemsPerPage = 10
                 },
                 ViewContext = viewContext.Object,
                 PageAction = "Test"

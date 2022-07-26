@@ -14,6 +14,9 @@ var app = builder.Build();
 
 //for supporting wwwroot folder
 app.UseStaticFiles();
+app.MapControllerRoute("pagination",
+    "Products/Page{productPage}",
+    new { Controller = "Home", action = "Index"});
 app.MapDefaultControllerRoute();
 
 SeedData.EnsurePopulated(app);

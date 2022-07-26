@@ -13,12 +13,12 @@ namespace SportsStore.Controllers
         { 
             _repository = repository;
         }
-        public IActionResult Index(int productPage = 1) => View(new ProductListViewModel
+        public ViewResult Index(int productPage = 1) => View(new ProductListViewModel
         {
             Products = _repository.Products.OrderBy(p => p.ProductId).Skip((productPage - 1) * pageSize).Take(pageSize),
             PageInfo = new PageInfo {
                 CurrentPage = productPage,
-                ItensPerPage = pageSize,
+                ItemsPerPage = pageSize,
                 TotalItems = _repository.Products.Count()
             }
         });
