@@ -27,7 +27,7 @@ namespace SportsStore.Tests
             HomeController controller = new HomeController(mock.Object);
 
             //act
-            ProductListViewModel result = controller.Index()?.ViewData.Model as ProductListViewModel ?? new();
+            ProductListViewModel result = controller.Index(null)?.ViewData.Model as ProductListViewModel ?? new();
 
             //assert
             Product[] products = result.Products.ToArray();
@@ -53,7 +53,7 @@ namespace SportsStore.Tests
             controller.pageSize = 3;
 
             //act
-            ProductListViewModel result = controller.Index(2)?.ViewData.Model as ProductListViewModel ?? new();
+            ProductListViewModel result = controller.Index(null, 2)?.ViewData.Model as ProductListViewModel ?? new();
 
             //assert
             Product[] products = result.Products.ToArray();
@@ -83,7 +83,7 @@ namespace SportsStore.Tests
             HomeController controller = new HomeController(mock.Object) { pageSize = pageSizeMock };
 
             //act
-            ProductListViewModel result = controller.Index(2)?.ViewData.Model as ProductListViewModel ?? new();
+            ProductListViewModel result = controller.Index(null, 2)?.ViewData.Model as ProductListViewModel ?? new();
 
             //assert
             PageInfo pageInfo = result.PageInfo;
@@ -93,5 +93,31 @@ namespace SportsStore.Tests
             Assert.Equal(totalPagesMock, pageInfo.TotalPages);
         }
 
+        [Fact]
+        public void Can_Filter_Products()
+        { 
+            //arrange
+            //create the mock repository
+            Mock<IStoreRepository> mock = new Mock<IStoreRepository>();
+            mock.Setup(m => m.Products).Returns((new Product[] {
+                new Product {ProductId = 1, Name = "P1", Category = "Cat1"},
+                new Product {ProductId = 2, Name = "P2", Category = "Cat2"},
+                new Product {ProductId = 3, Name = "P3", Category = "Cat1"},
+                new Product {ProductId = 4, Name = "P4", Category = "Cat2"},
+                new Product {ProductId = 5, Name = "P5", Category = "Cat3"}
+                }).AsQueryable<Product>());
+
+            //arrange - create a controller and make page size 3 items
+            HomeController controller = new HomeController(mock.Object);
+            controller.pageSize = 3;
+
+            //action
+            Product[] result = (controller.Index("Cat2", 1)?.ViewData.Model as ProductListViewModel ?? new()).Products.ToArray();
+
+            //assert
+            Assert.Equal(2, result.Length);
+            Assert.True(result[0].Name == "P2" && result[0].Category == "Cat2");
+            Assert.True(result[1].Name == "P4" && result[1].Category == "Cat2");
+        }
     }
 }
