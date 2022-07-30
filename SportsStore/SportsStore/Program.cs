@@ -8,6 +8,8 @@ builder.Services.AddDbContext<StoreDbContext>(options =>
 
 builder.Services.AddScoped<IStoreRepository, EFStoreRepository>();
 
+builder.Services.AddRazorPages();
+
 var app = builder.Build();
 
 //app.MapGet("/", () => "Hello World!");
@@ -21,6 +23,7 @@ app.MapControllerRoute("pagination",
     "Products/Page{productPage}",
     new { Controller = "Home", action = "Index", productPage = 1});
 app.MapDefaultControllerRoute();
+app.MapRazorPages();
 
 SeedData.EnsurePopulated(app);
 
