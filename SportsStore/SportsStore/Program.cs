@@ -17,12 +17,16 @@ builder.Services.AddScoped<Cart>(sp => SessionCart.GetCart(sp));
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddServerSideBlazor();
 
-builder.Services.AddDbContext<AppIdentityDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityConnection"]));
+builder.Services.AddDbContext<AppIdentityDbContext>(options => 
+    options.UseSqlServer(builder.Configuration["ConnectionStrings:IdentityConnection"]));
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppIdentityDbContext>();
 
 var app = builder.Build();
 
-//app.MapGet("/", () => "Hello World!");
+if (app.Environment.IsProduction())
+    app.UseExceptionHandler("/error");
+app.UseRequestLocalization(opts => 
+    { opts.AddSupportedCultures("en-Us").AddSupportedUICultures("en-Us").SetDefaultCulture("en-US"); });
 
 //for supporting wwwroot folder
 app.UseStaticFiles();
