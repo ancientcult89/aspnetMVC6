@@ -1,0 +1,34 @@
+var builder = WebApplication.CreateBuilder(args);
+
+var app = builder.Build();
+
+((IApplicationBuilder)app).Map("/branch", branch => {
+    branch.Run(new Platform.QueryStringMiddleware().Invoke);
+});
+
+app.Use(async (context, next) => {
+    await next();
+    await context.Response.WriteAsync($"\nStatus code: {context.Response.StatusCode}");
+});
+
+app.Use(async (context, next) => {
+    if (context.Request.Path == "/short")
+        await context.Response.WriteAsync($"Request Short Circuited");
+    else
+        await next();
+});
+
+app.Use(async (context, next) =>{
+    if (context.Request.Method == HttpMethods.Get && context.Request.Query["custom"] == "true")
+    {
+        context.Response.ContentType = "text/plain";
+        await context.Response.WriteAsync("Custom Middlware \n");
+    }
+    await next();
+});
+
+app.UseMiddleware<Platform.QueryStringMiddleware>();
+
+app.MapGet("/", () => "Hello World!");
+
+app.Run();
