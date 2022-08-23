@@ -2,7 +2,8 @@ using Platform;
 using Platform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddSingleton<IResponseFormatter, HtmlResponseFormatter>();
+//builder.Services.AddSingleton<IResponseFormatter, HtmlResponseFormatter>();
+builder.Services.AddScoped<IResponseFormatter, GuidService>();
 
 var app = builder.Build();
 
