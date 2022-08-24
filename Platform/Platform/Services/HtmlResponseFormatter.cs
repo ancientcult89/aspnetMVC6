@@ -16,5 +16,7 @@
                 </html>
             ");
         }
+
+        public bool RichOutput => true;
     }
 }
