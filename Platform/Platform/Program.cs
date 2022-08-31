@@ -1,34 +1,13 @@
-using Platform;
-using Microsoft.AspNetCore.HostFiltering;
+using Platform.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<HostFilteringOptions>(opts => { 
-    opts.AllowedHosts.Clear();
-    opts.AllowedHosts.Add("*.example.com");
-});
-
 var app = builder.Build();
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/error.html");
-    app.UseStaticFiles();
-}
 
-app.UseStatusCodePages("text/html", Platform.Responses.DefaultResponse);
+app.MapEndpoint<Platform.SumEndpoint>("/sum/{count:int=1000000000}");
 
-app.Use(async (context, next) => {
-    if (context.Request.Path == "/error")
-    {
-        context.Response.StatusCode = StatusCodes.Status404NotFound;
-        await Task.CompletedTask;
-    }
-    else
-    {
-        await next();
-    }
+app.MapGet("/", async context => {
+    await context.Response.WriteAsync("Hello World!");
 });
-
-app.Run(context => { throw new Exception("Something has gone wrong"); });
 
 app.Run();
