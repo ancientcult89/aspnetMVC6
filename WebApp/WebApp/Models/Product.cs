@@ -4,7 +4,7 @@ namespace WebApp.Models
 {
     public class Product
     {
-        public int ProductId { get; set; }
+        public long ProductId { get; set; }
         public string Name { get; set; } = string.Empty;
 
         [Column(TypeName = "decimal(8,2)")]

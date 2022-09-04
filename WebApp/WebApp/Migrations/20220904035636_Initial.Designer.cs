@@ -11,14 +11,14 @@ using WebApp.Models;
 namespace WebApp.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220903004608_Initial")]
+    [Migration("20220904035636_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.8")
+                .HasAnnotation("ProductVersion", "6.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -42,11 +42,11 @@ namespace WebApp.Migrations
 
             modelBuilder.Entity("WebApp.Models.Product", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<long>("ProductId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("ProductId"), 1L, 1);
 
                     b.Property<long>("CategoryId")
                         .HasColumnType("bigint");
