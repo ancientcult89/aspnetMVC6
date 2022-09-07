@@ -13,6 +13,7 @@ builder.Services.AddDbContext<DataContext>(opts => {
 });
 
 builder.Services.AddControllers();
+builder.Services.AddCors();
 
 var app = builder.Build();
 
