@@ -3,6 +3,7 @@ using WebApp.Models;
 
 namespace WebApp.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
@@ -16,20 +17,26 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<Product?> GetProduct(long id, [FromServices] ILogger<ProductsController> logger)
+        public async Task<IActionResult> GetProduct(long id)
         {
-            return await _dataContext.Products.FindAsync(id);
+            Product? p = await _dataContext.Products.FindAsync(id);
+            if (p == null)
+                return NotFound();
+
+            return Ok(p);
         }
 
         [HttpPost]
-        public async Task SaveProduct([FromBody] Product product)
-        { 
-            await _dataContext.Products.AddAsync(product);
+        public async Task<IActionResult> SaveProduct([FromBody] ProductBindingTarget target)
+        {
+            Product p = target.ToProduct();
+            await _dataContext.Products.AddAsync(p);
             await _dataContext.SaveChangesAsync();
+            return Ok(p);
         }
 
         [HttpPut]
-        public async Task UpdateProduct([FromBody] Product product)
+        public async Task UpdateProduct(Product product)
         {
             _dataContext.Products.Update(product);
             await _dataContext.SaveChangesAsync();
@@ -40,6 +47,14 @@ namespace WebApp.Controllers
         {
             _dataContext.Products.Remove(new Product() { ProductId = id });
             await _dataContext.SaveChangesAsync();
+        }
+
+        [HttpGet("redirect")]
+        public IActionResult Redirect()
+        {
+            //return RedirectToAction(nameof(GetProduct), new { Id = 1 });
+            //alternative
+            return RedirectToRoute(new { controller = "Products", action = "GetProduct", Id = 1 });
         }
     }
 }
