@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@model Product
+<!DOCTYPE html>
 <html>
     <head>
         <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
@@ -17,8 +18,12 @@
                         <td>@Model?.Price.ToString("c")</td>
                     </tr>
                     <tr>
-                        <th>CategoryID</th>
-                        <td>@Model?.CategoryId</td>
+                        <th>tax</th>
+                        <td>@Model?.Price * 0.2m</td>
+                    </tr>
+                     <tr>
+                        <th>tax</th>
+                        <td>@(Model?.Price * 0.2m)</td>
                     </tr>
                 </tbody>
             </table>
