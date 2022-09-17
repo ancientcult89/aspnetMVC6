@@ -1,10 +1,15 @@
-﻿<!DOCTYPE html>
+﻿@model Product
+@{
+    Layout = Model.Price > 100 ? "_ImportantLayout" : "_Layout";
+    ViewBag.Tittle = "Product Table";
+}
+
+<!DOCTYPE html>
 <html>
     <head>
         <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
     </head>
     <body>
-        <h6 class="bg-primary text-white text-center m-2 p-2">Product Table</h6>
         <div class="m-2">
             <table class="table table-sm table-striped table-bordered">
                 <tbody>
@@ -14,7 +19,10 @@
                     </tr>
                     <tr>
                         <th>Price</th>
-                        <td>@Model?.Price.ToString("c")</td>
+                        <td>
+                            @Model?.Price.ToString("c")
+                            (@(((Model?.Price / ViewBag.AveragePrice) * 100).ToString("F2"))% of average price)
+                        </td>
                     </tr>
                     <tr>
                         <th>CategoryID</th>
