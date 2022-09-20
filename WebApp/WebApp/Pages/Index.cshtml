@@ -1,7 +1,5 @@
 ﻿@page "{id:long?}"
 @model IndexModel
-@using Microsoft.AspNetCore.Mvc.RazorPages;
-@using WebApp.Models;
 
 <!DOCTYPE html>
 <html>
@@ -13,7 +11,7 @@
     </body>
 </html>
 
-@functions
+@*@functions
 {
     public class IndexModel : PageModel
     {
@@ -28,4 +26,4 @@
             Product = await _dataContext.Products.FindAsync(id);
         }
     }
-}
+}*@
