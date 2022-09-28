@@ -15,12 +15,8 @@
         <div class="m-2">
             <table class="table table-sm table-bordered table-striped">
                 <tbody>
-                    <tr>
-                        <th>Name</th>
-                        <td>@Model?.Product?.Name</td>
-                        <th>Price</th>
-                        <td>@Model?.Product?.Price.ToString("c")</td>
-                    </tr>
+                    <tr for="Product.Name"></tr>
+                    <tr for="Product.Price" format="c"></tr>
                 </tbody>
             </table>
             <form method="post">

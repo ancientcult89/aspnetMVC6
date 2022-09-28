@@ -13,7 +13,7 @@ namespace WebApp.TagHelpers
         {
             output.TagMode = TagMode.StartTagAndEndTag;
             TagBuilder th = new TagBuilder("th");
-            th.InnerHtml.Append(For?.Name ?? String.Empty);
+            th.InnerHtml.Append(For?.Name.Split(".").Last() ?? String.Empty);
             output.Content.AppendHtml(th);
             TagBuilder td = new TagBuilder("td");
             if (Format != null && For?.Metadata.ModelType == typeof(decimal))
