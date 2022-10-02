@@ -20,17 +20,14 @@
     <div class="form-group">
         <label asp-for="Category.Name"></label>
         @{ #pragma warning disable CS8602 }
-        <select class="form-control" asp-for="CategoryId">
-            <option value="1">Watersports</option>
-            <option value="2">Soccer</option>
-            <option value="3">Chess</option>
+        <select class="form-control" asp-for="CategoryId" asp-items="@ViewBag.Categories">
         </select>
         @{ #pragma warning restore CS8602 }
     </div>
     <div class="form-group">
         <label asp-for="Supplier.Name"></label>
         @{ #pragma warning disable CS8602 }
-        <input class="form-control" asp-for="Supplier.Name" />
+        <textarea class="form-control" asp-for="Supplier.Name"></textarea>
         @{ #pragma warning restore CS8602 }
     </div>
     <p></p>
