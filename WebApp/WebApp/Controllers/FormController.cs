@@ -13,21 +13,18 @@ namespace WebApp.Controllers
         { 
             _dataContext = dataContext;
         }
-        public async Task<IActionResult> Index(long id = 1)
+        public async Task<IActionResult> Index(long? id)
         {
             List<Category> categories = _dataContext.Categories.ToList();
             ViewBag.Categories = new SelectList(categories, "CategoryId", "Name");
             return View("Form", await _dataContext.Products
                 .Include(p => p.Category).Include(p => p.Supplier)
-                .FirstAsync(p => p.ProductId == id));
+                .FirstOrDefaultAsync(p => id == null || p.ProductId == id));
         }
 
-        public IActionResult SubmitForm()
+        public IActionResult SubmitForm(Product product)
         {
-            foreach (string key in Request.Form.Keys)
-            {
-                TempData[key] = string.Join(", ", Request.Form[key]);
-            }
+            TempData["product"] = System.Text.Json.JsonSerializer.Serialize(product);
             return RedirectToAction(nameof(Results));
         }
 
