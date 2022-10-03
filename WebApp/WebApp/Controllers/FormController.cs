@@ -22,9 +22,11 @@ namespace WebApp.Controllers
                 .FirstOrDefaultAsync(p => id == null || p.ProductId == id));
         }
 
-        public IActionResult SubmitForm(Product product)
+        public IActionResult SubmitForm([Bind("Name", "Category")] Product product)
         {
-            TempData["product"] = System.Text.Json.JsonSerializer.Serialize(product);
+            TempData["name"] = product.Name;
+            TempData["price"] = product.Price.ToString();
+            TempData["category name"] = product.Category?.Name;
             return RedirectToAction(nameof(Results));
         }
 
