@@ -13,7 +13,7 @@ namespace WebApp.Controllers
         { 
             _dataContext = dataContext;
         }
-        public async Task<IActionResult> Index(long? id)
+        public async Task<IActionResult> Index([FromQuery]long? id)
         {
             List<Category> categories = _dataContext.Categories.ToList();
             ViewBag.Categories = new SelectList(categories, "CategoryId", "Name");
@@ -33,6 +33,18 @@ namespace WebApp.Controllers
         public IActionResult Results()
         { 
             return View();
+        }
+
+        public string Header([FromHeader(Name ="Accept-Language")] string accept)
+        { 
+            return $"Header: {accept}";
+        }
+
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public Product Body([FromBody] Product model)
+        {
+            return model;
         }
     }
 }
