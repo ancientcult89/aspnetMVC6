@@ -1,50 +1,59 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApp.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace WebApp.Controllers
 {
     [AutoValidateAntiforgeryToken]
     public class FormController : Controller
     {
-        private DataContext _dataContext;
-        public FormController(DataContext dataContext)
-        { 
-            _dataContext = dataContext;
-        }
-        public async Task<IActionResult> Index([FromQuery]long? id)
+        private DataContext context;
+        public FormController(DataContext dbContext)
         {
-            List<Category> categories = _dataContext.Categories.ToList();
-            ViewBag.Categories = new SelectList(categories, "CategoryId", "Name");
-            return View("Form", await _dataContext.Products
-                .Include(p => p.Category).Include(p => p.Supplier)
-                .FirstOrDefaultAsync(p => id == null || p.ProductId == id));
+            context = dbContext;
         }
-
-        public IActionResult SubmitForm([Bind("Name", "Category")] Product product)
+        public async Task<IActionResult> Index(long? id)
         {
-            TempData["name"] = product.Name;
-            TempData["price"] = product.Price.ToString();
-            TempData["category name"] = product.Category?.Name;
-            return RedirectToAction(nameof(Results));
+            return View("Form", await context.Products
+            .FirstOrDefaultAsync(p => id == null || p.ProductId == id));
         }
-
-        public IActionResult Results()
-        { 
-            return View();
-        }
-
-        public string Header([FromHeader(Name ="Accept-Language")] string accept)
-        { 
-            return $"Header: {accept}";
-        }
-
         [HttpPost]
-        [IgnoreAntiforgeryToken]
-        public Product Body([FromBody] Product model)
+        public IActionResult SubmitForm(Product product)
         {
-            return model;
+            if (ModelState.GetValidationState(nameof(Product.Price)) == ModelValidationState.Valid && product.Price <= 0)
+            {
+                ModelState.AddModelError(nameof(Product.Price),"Enter a positive price");
+            }
+
+            if (ModelState.GetValidationState(nameof(Product.CategoryId)) == ModelValidationState.Valid && !context.Categories.Any(c =>
+                c.CategoryId == product.CategoryId))
+            {
+                ModelState.AddModelError(nameof(Product.CategoryId),
+                "Enter an existing category ID");
+            }
+
+            if (ModelState.GetValidationState(nameof(Product.SupplierId)) == ModelValidationState.Valid && !context.Suppliers.Any(s =>
+                s.SupplierId == product.SupplierId))
+            {
+                ModelState.AddModelError(nameof(Product.SupplierId),
+                "Enter an existing supplier ID");
+            }
+
+            if (ModelState.IsValid)
+            {
+                TempData["name"] = product.Name;
+                TempData["price"] = product.Price.ToString();
+                TempData["categoryId"] = product.CategoryId.ToString();
+                TempData["supplierId"] = product.SupplierId.ToString();
+                return RedirectToAction(nameof(Results));
+            }
+            else
+                return View("Form");
+        }
+        public IActionResult Results()
+        {
+            return View(TempData);
         }
     }
 }
