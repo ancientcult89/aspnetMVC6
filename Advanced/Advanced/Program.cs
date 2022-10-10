@@ -13,7 +13,7 @@ builder.Services.AddDbContext<DataContext>(opts => {
 
 var app = builder.Build();
 
-//app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "Hello World!");
 app.UseStaticFiles();
 app.MapControllers();
 app.MapControllerRoute("controllers", "controllers/{controller=Home}/{action=Index}/{id?}");
