@@ -1,35 +1,23 @@
-﻿<table class="table table-sm table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>ID</th><th>Name</th><th>Dept</th><th>Location</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach(Person p in People ?? Enumerable.Empty<Person>())
-        {
-            <tr class="@GetClass(p.Location?.City)">
-                <td>@p.PersonId</td>
-                <td>@p.Surname, @p.Firstname</td>
-                <td>@p.Department?.Name</td>
-                <td>@p.Location?.City, @p.Location?.State</td>
-            </tr>
-        }
-    </tbody>
-</table>
+﻿<TableTemplate RowType="Person" RowData="People" Highlight="@(p => p.Location?.City)" SortDirection="@(p => p.Surname)">
+    <Header>
+        <tr><th>ID</th><th>Name</th><th>Dept</th><th>Location</th></tr>
+    </Header>
+    <RowTemplate Context="p">
+        <td>@p.PersonId</td>
+        <td>@p.Surname, @p.Firstname</td>
+        <td>@p.Department?.Name</td>
+        <td>@p.Location?.City, @p.Location?.State</td>
+    </RowTemplate>
+</TableTemplate>
 
-<div class="form-group">
-    <label for="city">City</label>
-    <select name="city" class="form-control" @bind="SelectedCity">
-        <option disabled selected value="">Select City</option>
-        @foreach(string city in Cities ?? Enumerable.Empty<string>())
-        {
-            <option value="@city" selected="@(city == SelectedCity)">
-                @city
-            </option>
-        }
-    </select>
-</div>
 
+<ThemeWrapper Theme="info" Title="Location Selector">
+    <SelectFilter values="@Cities" title="@SelectTitle" @bind-SelectedValue="SelectedCity"/>
+
+    <button class="btn btn-primary mt-2" @onclick="@(() => SelectedCity = "Oakland")">
+        Change
+    </button>
+</ThemeWrapper>
 
 @code {
     [Inject]
@@ -39,4 +27,15 @@
     public IEnumerable<string>? Cities => Context?.Locations.Select(l => l.City);
     public string SelectedCity { get; set; } = string.Empty;
     public string GetClass(string? city) => SelectedCity == city ? "bg-info text-white" : "";
+
+    [Parameter]
+    public int ItemCount { get; set; } = 4;
+
+    [Parameter]
+    public string? SelectTitle { get; set; }
+
+    //public void HandleCustom(string newValue)
+    //{
+    //    SelectedCity = newValue;
+    //}
 }
