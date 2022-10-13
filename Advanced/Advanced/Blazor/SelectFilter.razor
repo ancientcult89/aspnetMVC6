@@ -1,4 +1,4 @@
-﻿<div class="form-group">
+﻿<div class="form-group p-2 bg-@Theme @TextColor()">
     <label for="select-@Title">@Title</label>
     <select name="select-@Title" class="form-control" @onchange="HandleSelect" value="@SelectedValue">
         <option disabled selected value="">Select @Title</option>
@@ -28,6 +28,15 @@
     public async Task HandleSelect(ChangeEventArgs e)
     {
         SelectedValue = e.Value as string;
+        if(SelectedValue == "Sales")
+        {
+            throw new Exception("Sales cannot be selected");
+        }
         await SelectedValueChanged.InvokeAsync(SelectedValue);
     }
+
+    [CascadingParameter(Name = "BgTheme")]
+    public string Theme { get; set; } = "";
+
+    public string TextColor() => String.IsNullOrEmpty(Theme) ? "text-dark" : "text-light";
 }
