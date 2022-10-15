@@ -1,12 +1,21 @@
-﻿<TableTemplate RowType="Person" RowData="People" Highlight="@(p => p.Location?.City)" SortDirection="@(p => p.Surname)">
+﻿@page "/people"
+@page "/"
+
+<TableTemplate RowType="Person" RowData="People" Highlight="@(p => p.Location?.City)" SortDirection="@(p => p.Surname)">
     <Header>
-        <tr><th>ID</th><th>Name</th><th>Dept</th><th>Location</th></tr>
+        <tr>
+            <th>ID</th><th>Name</th><th>Dept</th><th>Location</th>
+            <td></td>
+        </tr>
     </Header>
     <RowTemplate Context="p">
         <td>@p.PersonId</td>
         <td>@p.Surname, @p.Firstname</td>
         <td>@p.Department?.Name</td>
         <td>@p.Location?.City, @p.Location?.State</td>
+        <td>
+            <NavLink class="btn btn-sm btn-info" href="@GetEditUrl(p.PersonId)">Edit</NavLink>
+        </td>
     </RowTemplate>
 </TableTemplate>
 
@@ -18,6 +27,8 @@
         Change
     </button>
 </ThemeWrapper>
+
+<NavLink class="btn btn-primary" href="/depts">Departments</NavLink>
 
 @code {
     [Inject]
@@ -38,4 +49,7 @@
     //{
     //    SelectedCity = newValue;
     //}
+
+    public string GetEditUrl(long id) => $"/person/{id}";
+
 }

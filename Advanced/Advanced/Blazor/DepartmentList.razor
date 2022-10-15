@@ -1,4 +1,7 @@
-﻿<CascadingValue Name="BgTheme" Value="Theme" IsFixed="false">
+﻿@page "/departments"
+@page "/depts"
+
+<CascadingValue Name="BgTheme" Value="Theme" IsFixed="false">
     <TableTemplate RowType="Department" RowData="Departments" Highlight="@(d => d.Name)" SortDirection="@(d => d.Name)">
         <Header>
             <tr>
@@ -21,10 +24,17 @@
 
 <SelectFilter Title="@("Theme")" Values="Themes" @bind-SelectedValue="Theme"></SelectFilter>
 
+<button class="btn btn-primary" @onclick="HandleClick">
+    People
+</button>
+
 @code {
     [Inject]
     public DataContext? Context { get; set; }
     public IEnumerable<Department>? Departments => Context?.Departments?.Include(d => d.People).ThenInclude(p => p.Location);
     public string Theme { get; set; } = "info";
     public string[] Themes = new string[] { "primary", "info", "success" };
+    [Inject]
+    public NavigationManager? NavManager { get; set; }
+    public void HandleClick() => NavManager?.NavigateTo("/people");
 }
