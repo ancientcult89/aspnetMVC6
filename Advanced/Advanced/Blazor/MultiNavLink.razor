@@ -1,5 +1,12 @@
 ﻿<a class="@ComputedClass" @onclick="HandleClick" href="">
-    @ChildContent
+    @if (Enabled)
+    {
+        @ChildContent
+    }
+    else
+    {
+        @("Disabled")
+    }
 </a>
 
 @code {
@@ -16,6 +23,9 @@
     public string ActiveClass { get; set; } = string.Empty;
 
     [Parameter]
+    public string DisabledClasses { get; set; } = string.Empty;
+
+    [Parameter]
     public NavLinkMatch? Match{ get; set; }
 
     public NavLinkMatch ComputedMatch { get => Match ?? (Href.Count() == 1 ? NavLinkMatch.Prefix : NavLinkMatch.All); }
@@ -24,6 +34,8 @@
     public RenderFragment? ChildContent { get; set; }
 
     public string ComputedClass { get; set; } = string.Empty;
+
+    private bool Enabled { get; set; } = true;
 
     public void HandleClick()
     {
@@ -35,7 +47,10 @@
         string path = NavManager!.ToBaseRelativePath(currentUrl);
         path = path.EndsWith("/") ? path.Substring(0, path.Length - 1) : path;
         bool match = Href.Any(href => ComputedMatch == NavLinkMatch.All ? path == href : path.StartsWith(href));
-        ComputedClass = match ? $"{Class} {ActiveClass}" : Class;
+        if (!Enabled)
+            ComputedClass = DisabledClasses;
+        else
+            ComputedClass = match ? $"{Class} {ActiveClass}" : Class;
     }
 
     protected override void OnParametersSet()
@@ -44,5 +59,25 @@
         NavManager!.LocationChanged += (sender, args) => CheckMatch(args.Location);
         Href = Href.Select(h => h.StartsWith("/") ? h.Substring(1) : h);
         CheckMatch(NavManager!.Uri);
+    }
+
+    public void SetEnabled(bool enabled)
+    {
+        InvokeAsync(() =>
+        {
+            Enabled = enabled;
+            CheckMatch(NavManager!.Uri);
+            StateHasChanged();
+        });
+    }
+
+    private static event EventHandler? ToggleEvent;
+
+    [JSInvokable]
+    public static void ToggleEnabled() => ToggleEvent?.Invoke(null, new EventArgs());
+
+    protected override void OnInitialized()
+    {
+        ToggleEvent += (sender, args) => SetEnabled(!Enabled);
     }
 }

@@ -7,6 +7,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+builder.Services.AddSingleton<Advanced.Services.ToggleService>();
+
 builder.Services.AddDbContext<DataContext>(opts => {
     opts.UseSqlServer(builder.Configuration["ConnectionStrings:PeopleConnection"]);
     opts.EnableSensitiveDataLogging(true);
