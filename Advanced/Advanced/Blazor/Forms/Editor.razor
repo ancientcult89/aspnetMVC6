@@ -1,19 +1,23 @@
 ﻿@page "/forms/edit/{id:long}"
+@page "/forms/create"
 @layout EmptyLayout
 @inherits OwningComponentBase<DataContext>
 
 <link href="/blazorValidation.css" rel="stylesheet" />
-<h4 class="bg-primary text-center text-white p-2">Edit</h4>
+<h4 class="bg-@Theme text-center text-white p-2">@Mode</h4>
 <h6 class="bg-info text-center text-white p-2">@FormSubmitMessage</h6>
 
 <FormSpy PersonData="PersonData">
     <EditForm Model="PersonData" OnValidSubmit="HandleValidSubmit" OnInvalidSubmit="HandleInvalidSubmit">
         <DataAnnotationsValidator/>
-        <ValidationSummary/>
-        <div class="form-group">
-            <label>Person ID</label>
-            <InputNumber class="form-control" @bind-Value="PersonData.PersonId" disabled></InputNumber>
-        </div>
+        <DeptStateValidator DepartmentId="2" State="CA"/>
+        @if (Mode == "Edit")
+        {
+            <div class="form-group">
+                <label>ID</label>
+                <InputNumber class="form-control" @bind-Value="PersonData.PersonId" readonly></InputNumber>
+            </div>            
+        }
         <div class="form-group">
             <label>Firstname</label>
             <ValidationMessage For="@(() => PersonData.Firstname)"/>
@@ -25,7 +29,7 @@
             <InputText class="form-control" @bind-Value="PersonData.Surname"></InputText>
         </div>
         <div class="form-group">
-            <label>Dept ID</label>
+            <label>Deptartment</label>
             <ValidationMessage For="@(() => PersonData.DepartmentId)"/>
             <CustomSelect TValue="long" Values="Departments" 
                 Parser="@((string str) => long.Parse(str))"
@@ -36,7 +40,7 @@
             </CustomSelect>
         </div>
         <div class="form-group">
-            <label>Location ID</label>
+            <label>Location</label>
             <ValidationMessage For="@(() => PersonData.LocationId)"/>
             <CustomSelect TValue="long" Values="Locations" 
                 Parser="@((string str) => long.Parse(str))"
@@ -47,7 +51,7 @@
             </CustomSelect>
         </div>
         <div class="text-center">
-            <button type="submit" class="btn btn-primary mt-2">Submit</button>
+            <ValidButton type="submit" BtnTheme="@Theme">Save</ValidButton>
             <NavLink class="btn btn-secondary mt-2" href="/forms">Back</NavLink>
         </div>
     </EditForm>
@@ -73,7 +77,8 @@
     {
         if (DataContext != null)
         {
-            PersonData = await DataContext.People.FindAsync(Id) ?? new Person();
+            if(Mode == "Edit")
+                PersonData = await DataContext.People.FindAsync(Id) ?? new Person();
             Departments = await DataContext.Departments.ToDictionaryAsync(d => d.Name, d => d.DepartmentId);
             Locations = await DataContext.Locations.ToDictionaryAsync(d => $"{d.City}, {d.State}", d => d.LocationId);
         }
@@ -81,8 +86,21 @@
 
     public string FormSubmitMessage { get; set; } = "Form Data Not Submitted";
 
-    public void HandleValidSubmit() => FormSubmitMessage = "Valid Data Submitted";
+    //public void HandleValidSubmit() => FormSubmitMessage = "Valid Data Submitted";
     public void HandleInvalidSubmit() => FormSubmitMessage = "Invalid Data Submitted";
+
+    public string Theme => Id == 0 ? "primary" : "warning";
+    public string Mode => Id == 0 ? "Create" : "Edit";
+
+    public async Task HandleValidSubmit() {
+        if (DataContext != null) {
+            if (Mode == "Create") {
+                DataContext.Add(PersonData);
+            }
+            await DataContext.SaveChangesAsync();
+            NavManager?.NavigateTo("/forms");
+        }
+    }
 
     //public void Dispose()
     //{

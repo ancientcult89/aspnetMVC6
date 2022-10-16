@@ -50,9 +50,10 @@
 </table>
 
 <NavLink class="btn btn-primary" href="/forms/create">Create</NavLink>
+<NavLink class="btn btn-info" @onclick="UpdateData">Refresh</NavLink>
 
 @code {
-        //[Inject]
+    [Inject]
     public DataContext? DataContext { get; set; }
 
     public IEnumerable<Person> People { get; set; } = Enumerable.Empty<Person>();
