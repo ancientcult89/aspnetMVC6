@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Advanced.Models
+namespace DataModel
 {
     public class Person
     {

@@ -1,4 +1,4 @@
-﻿namespace Advanced.Models
+﻿namespace DataModel
 {
     public class Department
     {

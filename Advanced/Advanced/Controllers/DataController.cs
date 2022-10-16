@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Advanced.Models;
 using Microsoft.EntityFrameworkCore;
+using DataModel;
 
 namespace Advanced.Controllers
 {

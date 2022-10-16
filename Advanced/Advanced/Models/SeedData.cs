@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using DataModel;
 
 namespace Advanced.Models
 {
