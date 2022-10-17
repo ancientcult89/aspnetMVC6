@@ -19,6 +19,16 @@ builder.Services.AddDbContext<DataContext>(opts => {
     opts.EnableSensitiveDataLogging(true);
 });
 
+builder.Services.Configure<IdentityOptions>(opts => {
+    opts.Password.RequiredLength = 6;
+    opts.Password.RequireNonAlphanumeric = false;
+    opts.Password.RequireLowercase = false;
+    opts.Password.RequireUppercase = false;
+    opts.Password.RequireDigit = false;
+    opts.User.RequireUniqueEmail = true;
+    opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz";
+});
+
 var app = builder.Build();
 
 //app.MapGet("/", () => "Hello World!");

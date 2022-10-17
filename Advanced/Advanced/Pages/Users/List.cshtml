@@ -34,6 +34,8 @@
     }
 </table>
 
+<a class="btn btn-primary" asp-page="create">Create</a>
+
 @functions {
     public class ListModel : AdminPageModel 
     {
@@ -49,6 +51,14 @@
         public void OnGet() 
         {
             Users = UserManager.Users;
+        }
+
+        public async Task<IActionResult> OnPostAsync(string id)
+        {
+            IdentityUser user = await UserManager.FindByIdAsync(id);
+            if (user != null)
+                await UserManager.DeleteAsync(user);
+            return RedirectToPage();
         }
     }
 }
