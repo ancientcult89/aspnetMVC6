@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Advanced.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Advanced;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,10 +31,25 @@ builder.Services.Configure<IdentityOptions>(opts => {
     opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyz";
 });
 
+builder.Services.AddAuthentication(opts => {
+    opts.DefaultScheme =
+    CookieAuthenticationDefaults.AuthenticationScheme;
+    opts.DefaultChallengeScheme =
+    CookieAuthenticationDefaults.AuthenticationScheme;
+}).AddCookie(opts => {
+    opts.Events.DisableRedirectForPath(e => e.OnRedirectToLogin,
+    "/api", StatusCodes.Status401Unauthorized);
+    opts.Events.DisableRedirectForPath(e => e.OnRedirectToAccessDenied,
+    "/api", StatusCodes.Status403Forbidden);
+});
+
 var app = builder.Build();
 
 //app.MapGet("/", () => "Hello World!");
 app.UseStaticFiles();
+
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 app.MapControllerRoute("controllers", "controllers/{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
@@ -45,5 +62,6 @@ app.MapFallbackToFile("/webassembly/{*path:nonfile}", "/webassembly/index.html")
 var context = app.Services.CreateScope().ServiceProvider
     .GetRequiredService<DataContext>();
 SeedData.SeedDatabase(context);
+IdentitySeedData.CreateAdminAccount(app.Services, app.Configuration);
 
 app.Run();

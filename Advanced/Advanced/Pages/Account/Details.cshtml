@@ -1,0 +1,36 @@
+﻿@page
+@model DetailsModel
+
+<table class="table table-sm table-bordered">
+    <tbody>
+        @if (Model.IdentityUser == null) 
+        {
+            <tr><th class="text-center">No Identity Cookie</th></tr>
+        } 
+        else 
+        {
+            <tr><th>Name</th><td>@Model.IdentityUser.UserName</td></tr>
+            <tr><th>Email</th><td>@Model.IdentityUser.Email</td></tr>
+        }
+    </tbody>
+</table>
+
+@functions{
+    public class DetailsModel : PageModel
+    {
+        public UserManager<IdentityUser> _userManager;
+
+        public DetailsModel(UserManager<IdentityUser> userManager)
+        {
+            _userManager = userManager;
+        }
+
+        public IdentityUser? IdentityUser { get; set; }
+
+        public async Task OnGetAsync()
+        {
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+                IdentityUser = await _userManager.FindByNameAsync(User.Identity.Name);
+        }
+    }
+}
